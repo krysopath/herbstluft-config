@@ -12,7 +12,7 @@ x=${geometry[0]}
 y=${geometry[1]}
 panel_width=${geometry[2]}
 panel_height=16
-font="-*-fixed-medium-*-*-*-12-*-*-*-*-*-*-*"
+font="-*-fixed-medium-*-*-*-14-*-*-*-*-*-*-*"
 bgcolor=$(hc get frame_border_normal_color)
 selbg=$(hc get window_border_active_color)
 selfg='#101010'
@@ -117,11 +117,31 @@ hc pad $monitor $panel_height
         echo -n "$separator"
         echo -n "^bg()^fg() ${windowtitle//^/^^}"
         # small adjustments
-        right="$separator^bg() $date $separator"
+        ##battery
+        bat_enow=$(cat /sys/class/power_supply/BAT0/charge_now)
+        bat_efull=$(cat /sys/class/power_supply/BAT0/charge_full_design)
+        bat_pnow=$(cat /sys/class/power_supply/BAT0/charge_now)
+        bat_percent=$(expr $bat_enow \* 100 / $bat_efull) 
+        bat_watt="$(expr $bat_pnow / 1000000)"
+        bat_watt="$bat_watt,$(expr $bat_pnow / 10000 % 100)"
+        battery="\xE2\x9A\xA1 ${bat_percent}%"
+        lcd_full=$(cat /sys/class/backlight/intel_backlight/max_brightness)
+        lcd_now=$(cat /sys/class/backlight/intel_backlight/brightness)
+        bright="\xE2\x98\xBC $(expr $lcd_now \* 100 / $lcd_full)%"
+        volume="\xE2\x99\xAB $(amixer get Master | egrep -o '[0-9]+%' | tr -d '%')%"
+        avg_mhz="$(~/.config/herbstluftwm/cpu.py)"
+
+        # constructing the string
+        right="$separator^fg() $avg_mhz"
+        right="$separator^fg() $battery $right"
+        right="$separator^fg() $bright $right"
+        right="$separator^fg() $volume $right"
+        right="$separator^fg() $date $right"
         right_text_only=$(echo -n "$right" | sed 's.\^[^(]*([^)]*)..g')
         # get width of right aligned text.. and add some space..
-        width=$($textwidth "$font" "$right_text_only    ")
-        echo -n "^pa($(($panel_width - $width)))$right"
+        width=$($textwidth "$font" "$right_text_only")
+        width=$(expr $width - 210)
+        echo -n "^pa($(($panel_width - $width)))$(echo -e $right)"
         echo
 
         ### Data handling ###
