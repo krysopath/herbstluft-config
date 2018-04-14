@@ -1,0 +1,11 @@
+#!/bin/bash
+if [[ ! -z $1 ]]
+    then
+    if [[ $1 = "enable" ]]
+        then 
+        HEAD1="1920x1080+0+0"
+        HEAD2=2560x1440+1920+0
+        /usr/bin/herbstclient set_monitors $HEAD1 $HEAD2
+        /usr/bin/mons -e right
+    fi
+fi

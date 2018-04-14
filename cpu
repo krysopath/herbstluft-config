@@ -1,0 +1,24 @@
+#!/bin/bash
+
+map_stdin() {
+  local FUNCTION=$1
+  while read LINE; do
+    $FUNCTION $LINE
+  done
+}
+
+div_1000() {
+    echo "scale=2; $1/1000" | bc -l 
+}
+
+get_cpu_temperature() {
+    temp=$( sensors | grep Core | cut -d " " -f 10 | xargs )
+    #temp=`expr $temp / 1000`
+    echo $temp
+}
+get_cpu_mhz() {
+    mhz=$( cat /proc/cpuinfo | grep MHz | cut -d : -f 2 | xargs -n1 | map_stdin div_1000 | xargs  )
+    echo $mhz
+
+}
+echo "TEMP $(get_cpu_temperature) | GHZ $(get_cpu_mhz) |"
