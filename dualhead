@@ -5,7 +5,16 @@ then
         then 
         HEAD1="1920x1080+0+0"
         HEAD2="2560x1440+1920+0"
+       #HEAD2="1080x720+1920+w0"
         /usr/bin/herbstclient set_monitors $HEAD1 $HEAD2
         /usr/bin/mons -e right
+    fi
+    if test $1 = "disable"
+        then 
+        HEAD1="1920x1080+0+0"
+        #HEAD2="2560x1440+1920+0"
+       #HEAD2="1080x720+1920+w0"
+        /usr/bin/herbstclient set_monitors $HEAD1
+        #/usr/bin/mons -e right
     fi
 fi
