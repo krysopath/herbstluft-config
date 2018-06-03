@@ -12,4 +12,5 @@ def run():
         os.system('xli -border black -onroot -display ":0" -fillscreen  ~/.config/herbstluftwm/cat_pic.jpg')
         os.system("mpd &")
         os.system("redshift &")
+        os.system("gpg-agent &")
 
